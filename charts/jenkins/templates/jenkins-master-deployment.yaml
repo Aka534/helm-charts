@@ -308,6 +308,8 @@ spec:
             {{- if and (.Values.master.JCasC.enabled) (.Values.master.sidecars.configAutoReload.enabled) }}
             - name: sc-config-volume
               mountPath: {{ .Values.master.sidecars.configAutoReload.folder | default (printf "%s/casc_configs" (.Values.master.jenkinsRef)) }}
+            - name: docker-sock-volume
+              mountPath: "/var/run/docker.sock"
             {{- end }}
 
 {{- if and (.Values.master.JCasC.enabled) (.Values.master.sidecars.configAutoReload.enabled) }}
@@ -355,6 +357,9 @@ spec:
 {{- if .Values.persistence.volumes }}
 {{ tpl (toYaml .Values.persistence.volumes | indent 6) . }}
 {{- end }}
+      - name: docker-sock-volume
+          hostPath:
+            path: /var/run/docker.sock
       - name: plugins
         emptyDir: {}
       - name: tmp
